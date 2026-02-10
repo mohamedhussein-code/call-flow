@@ -1,2 +1,148 @@
-# call-flow
-Technical Support Inteactions Flow Assistance 
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <title>Call Flow Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      direction: rtl;
+      padding: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+    }
+    h2 {
+      margin-top: 0;
+      color: #1f3c88;
+    }
+    p {
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #1f3c88;
+      color: #fff;
+    }
+    button.secondary {
+      background: #4caf50;
+    }
+    button.close {
+      background: #e53935;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2 id="title"></h2>
+  <p id="text"></p>
+  <div class="actions" id="actions"></div>
+</div>
+
+<script>
+const flow = {
+  start: {
+    title: "إضافة مدفوعات العملاء",
+    text: "سيتم إرشادك خلال سيناريو إضافة مدفوعات العملاء.",
+    actions: [
+      { label: "ابدأ", next: "choose_type" }
+    ]
+  },
+
+  choose_type: {
+    title: "كيفية إضافة مدفوعات العملاء؟",
+    text: "هل تُفضل سداد فاتورة/فواتير محددة أم استلام دفعات بشكل عام من العميل؟",
+    actions: [
+      { label: "سداد فاتورة/فواتير محددة", next: "specific_invoice" },
+      { label: "استلام دفعات بشكل عام", next: "general_payment" }
+    ]
+  },
+
+  specific_invoice: {
+    title: "سداد فاتورة/فواتير محددة",
+    text:
+`يتم توضيح طريقة تنفيذ الخطوات بشكل تفصيلي خلال المكالمة حتى إتمام العملية بنجاح.
+
+ملاحظات:
+- في حال إضافة المدفوعات عن طريق سند قبض، يجب اختيار حساب العميل بالحساب الفرعي
+- يمكن توزيع الرصيد على الفواتير المستحقة`,
+    actions: [
+      { label: "🗣 توضيح خلال المكالمة", next: "close" },
+      { label: "📲 إرسال رابط شرح عبر الواتساب", next: "send_links" },
+      { label: "❌ إغلاق", next: "close" }
+    ]
+  },
+
+  general_payment: {
+    title: "استلام دفعات بشكل عام من العميل",
+    text:
+`يتم توضيح طريقة تنفيذ الخطوات بشكل تفصيلي خلال المكالمة.
+
+ملاحظات:
+- يجب اختيار حساب العميل بالحساب الفرعي
+- يمكن توزيع الرصيد لاحقاً على الفواتير`,
+    actions: [
+      { label: "🗣 توضيح خلال المكالمة", next: "close" },
+      { label: "📲 إرسال رابط شرح عبر الواتساب", next: "send_links" },
+      { label: "❌ إغلاق", next: "close" }
+    ]
+  },
+
+  send_links: {
+    title: "إرسال روابط الشرح",
+    text:
+`يمكن إرسال الروابط التوضيحية التالية للعميل:
+- شرح إضافة سند قبض
+- شرح توزيع الرصيد على الفواتير
+- دليل المستخدم`,
+    actions: [
+      { label: "❌ إغلاق", next: "close" }
+    ]
+  },
+
+  close: {
+    title: "تم إنهاء السيناريو",
+    text: "هل تحتاج مساعدة في سيناريو آخر؟",
+    actions: []
+  }
+};
+
+function render(step) {
+  const data = flow[step];
+  document.getElementById("title").innerText = data.title;
+  document.getElementById("text").innerText = data.text;
+
+  const actionsDiv = document.getElementById("actions");
+  actionsDiv.innerHTML = "";
+
+  data.actions.forEach(a => {
+    const btn = document.createElement("button");
+    btn.innerText = a.label;
+    btn.onclick = () => render(a.next);
+    actionsDiv.appendChild(btn);
+  });
+}
+
+render("start");
+</script>
+
+</body>
+</html>
