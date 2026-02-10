@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>دليل سيناريوهات الدعم</title>
+<style>
+body {
+  font-family: Tahoma, Arial;
+  direction: rtl;
+  background: #f4f6f8;
+  padding: 20px;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+h2 { margin-top: 0; }
+.script {
+  background: #eef3ff;
+  padding: 15px;
+  border-right: 4px solid #4a6cff;
+  margin-bottom: 20px;
+  line-height: 1.9;
+  white-space: pre-line;
+}
+button {
+  padding: 10px 16px;
+  margin: 6px;
+  border: none;
+  border-radius: 6px;
+  background: #4a6cff;
+  color: #fff;
+  cursor: pointer;
+}
+.secondary { background:#6c757d; }
+.danger { background:#d9534f; }
+.controls {
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div id="app"></div>
+  <div class="controls">
+    <button class="secondary" onclick="back()">⬅ رجوع</button>
+    <button class="danger" onclick="restart()">🔄 بداية جديدة</button>
+  </div>
+</div>
+
+<script src="flow-data.js"></script>
+<script>
+let history = [];
+let current = "start";
+
+function render(id){
+  current = id;
+  const n = flow[id];
+  let html = `<h2>${n.title}</h2><div class="script">${n.text}</div>`;
+  (n.options||[]).forEach(o=>{
+    html += `<button onclick="next('${o.next}')">${o.label}</button>`;
+  });
+  document.getElementById("app").innerHTML = html;
+}
+function next(id){ history.push(current); render(id); }
+function back(){ if(history.length) render(history.pop()); }
+function restart(){ history=[]; render("start"); }
+render("start");
+</script>
+</body>
+</html>
